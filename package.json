@@ -1,0 +1,26 @@
+{
+  "name": "defi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PadaliyaSavan88/LiquidityPoolManagement.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PadaliyaSavan88/LiquidityPoolManagement/issues"
+  },
+  "homepage": "https://github.com/PadaliyaSavan88/LiquidityPoolManagement#readme",
+  "dependencies": {
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1"
+  }
+}

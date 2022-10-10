@@ -25,7 +25,7 @@ contract Lending {
         require(Lenders[_user].ID > 0, "No Tokens Lended Yet");
         require(Lenders[_user].amount == 0, "Insufficient Balance In Pool");
         uint dayDifference = getTimeDifference(_user);
-        require(Lenders[_user].amount * (25*dayDifference)/100 >= _value, "Withdrawl amount restricted");
+        require(Lenders[_user].amount * (25*dayDifference)/100 <= _value, "Withdrawl amount restricted");
         _;
     }
 
@@ -43,29 +43,27 @@ contract Lending {
         else return 4;
     }
 
-    function calculateTaxOnExit(address _user) internal view returns(uint) {
+    function calculateTaxOnExit(address _user, uint _value) internal view {
         uint dayDifference = getTimeDifference(_user);
-        if(dayDifference == 0) return 0;
-        else if (dayDifference == 1) return Lenders[_user].amount * 75 / 100;
-        else if (dayDifference == 2) return Lenders[_user].amount * 50 / 100;
-        else if (dayDifference == 3) return Lenders[_user].amount * 25 / 100;
-        else if (dayDifference == 4) return Lenders[_user].amount;
-        else return 0;
+        uint tax;
+        if(dayDifference == 0 || dayDifference == 4) tax = 0;
+        else if (dayDifference == 1) tax = _value * 75 / 100;
+        else if (dayDifference == 2) tax = _value * 50 / 100;
+        else tax = _value * 25 / 100;
+        getExitPoolStatus(_user, _value, tax);
     }
 
-    function getExitPoolStatus(address _user, uint _value, uint tax) public  exitPoolValidation(_user, _value) view returns(uint) {
+    function getExitPoolStatus(address _user, uint _value, uint tax) public view returns(uint) {
         uint dayDifference = getTimeDifference(_user);
         if(dayDifference == 0) return 0 + tax;
-        else if (dayDifference == 1) return Lenders[_user].amount * 25 / 100 + tax;
-        else if (dayDifference == 2) return Lenders[_user].amount * 50 / 100 + tax;
-        else if (dayDifference == 3) return Lenders[_user].amount * 75 / 100 + tax;
-        else if (dayDifference == 4) return Lenders[_user].amount + tax;
-        else return 0 + tax;
+        else if (dayDifference == 1) return _value * 25 / 100 + tax;
+        else if (dayDifference == 2) return _value * 50 / 100 + tax;
+        else if (dayDifference == 3) return _value * 75 / 100 + tax;
+        else return _value + tax;
     }
 
-    function getExitPoolEstimation(address _user, uint _value) public view {
-        uint _tax = calculateTaxOnExit(_user);
-        getExitPoolStatus(_user, _value, _tax);
+    function getExitPoolEstimation(address _user, uint _value) public view exitPoolValidation(_user, _value) {
+        calculateTaxOnExit(_user, _value);
     }
 
     function exitPool(address _user, uint _value) public payable exitPoolValidation(_user, _value) {
