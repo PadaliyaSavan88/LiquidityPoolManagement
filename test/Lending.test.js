@@ -28,7 +28,7 @@ contract('Token', ([deployer, user, receiver, exchange]) => {
         it('success scenario', async () => {
             await lending.enterPool(user, ether(1),{from: user})
             let lender = await lending.Lenders(user)
-            assert.equal(lender[2].toString(), ether(1).toString())
+            assert.equal(lender[2].toString(), ether(1).toString()) // lenders[2] is to access variable at 3rd position in lenders struct
         })
     })
 
